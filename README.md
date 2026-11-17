@@ -1,3 +1,8 @@
 # Spring Cloud Microservices
 
-A microservices architecture project built with Spring Boot and Spring Cloud.
+![Eureka Dashboard](docs/images/eureka.png)
+
+A microservices architecture project built with Spring Boot 4.1.2
+
+
+Work om progress..
