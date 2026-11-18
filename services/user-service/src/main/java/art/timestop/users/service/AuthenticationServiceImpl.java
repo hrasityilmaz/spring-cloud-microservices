@@ -3,6 +3,7 @@ package art.timestop.users.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -87,6 +88,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
        User user = userRepository.findByEmail(loginRequestDto.email())
             .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getId());
         String jwtToken = jwtService.generateToken(new HashMap<>(), user);
 
         return new LoginResponseDto(jwtToken);
