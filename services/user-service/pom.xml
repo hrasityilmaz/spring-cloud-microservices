@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>art.timestop</groupId>
-	<artifactId>todos</artifactId>
+	<artifactId>users-ws</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>todos</name>
+	<name>users-ws</name>
 	<description/>
 	<url/>
 	<licenses>
