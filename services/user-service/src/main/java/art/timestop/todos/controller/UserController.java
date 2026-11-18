@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 
 @Tag (name = "User REST API endpoints")
-@RestController 
+@RestController
 @RequestMapping ("/api/user")
 public class UserController {
     private final UserService userService;
@@ -42,12 +42,19 @@ public class UserController {
     public void deleteUser() {
         userService.deleteUser();;
     }
-    
+
     @Operation (summary = "Update Password")
     @ResponseStatus (HttpStatus.OK)
     @PutMapping ("/password")
     public void passwordUpdate(@Valid @RequestBody PasswordUpdate updateRequest) throws Exception {
         userService.passwordUpdate(updateRequest);
+    }
+
+    @Operation (summary = "users-ws status control")
+    @GetMapping("/status/check")
+    @ResponseStatus(HttpStatus.OK)
+    public String status() {
+        return "working";
     }
 
 }

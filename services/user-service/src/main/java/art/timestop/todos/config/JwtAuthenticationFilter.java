@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 
-@Component 
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         @Nonnull HttpServletResponse response,
         @Nonnull FilterChain filterChain
     ) throws ServletException, IOException {
-        
+
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
@@ -51,15 +51,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring("Bearer ".length());
         userEmail = jwtService.extractUsername(jwt);
 
-       
 
+        System.out.println("URI: " + request.getRequestURI());
+        System.out.println("AUTH: " + request.getHeader("Authorization"));
         if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail); // maybe this.userDetailsService...
-            
-            System.out.println("AUTH HEADER: " + authHeader);
-            System.out.println("USER EMAIL: " + userEmail);
-            System.out.println("TOKEN VALID: " + jwtService.isTokenValid(jwt, userDetails));
-
             if(jwtService.isTokenValid(jwt, userDetails)){
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     userDetails,
@@ -74,7 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    
+
 
 
 }
