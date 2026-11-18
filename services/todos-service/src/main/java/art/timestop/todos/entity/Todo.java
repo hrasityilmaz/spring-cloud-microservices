@@ -1,13 +1,10 @@
-package art.timestop.users.entities;
+package art.timestop.todos.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Table(name = "todos")
@@ -31,19 +28,16 @@ public class Todo {
     @Column (nullable = false)
     private boolean completed;
 
-    @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn (name = "owner_id", nullable = false)
-    private User owner;
+    @Column (nullable = false)
+    private Long owner;
 
     public Todo() {}
-
-
 
     public Todo(String title,
          String description,
          int priority,
          boolean completed,
-         User owner) {
+         Long owner) {
         this.title = title;
         this.description = description;
         this.priority = priority;
@@ -51,55 +45,38 @@ public class Todo {
         this.owner = owner;
     }
 
-
-
     public long getId() {
         return id;
     }
-
-
 
     public void setId(long id) {
         this.id = id;
     }
 
-
-
     public String getTitle() {
         return title;
     }
-
-
 
     public void setTitle(String title) {
         this.title = title;
     }
 
-
-
     public String getDescription() {
         return description;
     }
-
-
 
     public void setDescription(String description) {
         this.description = description;
     }
 
 
-
     public int getPriority() {
         return priority;
     }
 
-
-
     public void setPriority(int priority) {
         this.priority = priority;
     }
-
-
 
     public boolean isCompleted() {
         return completed;
@@ -111,11 +88,11 @@ public class Todo {
         this.completed = completed;
     }
 
-    public User getOwner() {
+    public Long getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner){
+    public void setOwner(Long owner){
         this.owner = owner;
     }
 

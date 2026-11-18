@@ -10,7 +10,6 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -20,7 +19,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -56,16 +54,16 @@ public class User implements UserDetails {
     @CollectionTable(name = "user_authorities", joinColumns = @JoinColumn(name = "user_id"))
     private List<Authority> authorities;
 
-    @OneToMany (mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Todo> todos;
+    //@OneToMany (mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<Todo> todos;
 
-    public List<Todo> getTodos() {
-        return todos;
-    }
+    //public List<Todo> getTodos() {
+    //    return todos;
+    //}
 
-    public void setTodos(List<Todo> todos) {
-        this.todos = todos;
-    }
+    //public void setTodos(List<Todo> todos) {
+    //    this.todos = todos;
+    //}
 
     public User() {} // For jpa
 

@@ -1,7 +1,5 @@
 package art.timestop.users.entities;
 
-
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 
 import art.timestop.users.enums.Role;
