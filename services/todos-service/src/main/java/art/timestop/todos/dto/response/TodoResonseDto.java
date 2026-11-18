@@ -5,5 +5,6 @@ public record TodoResonseDto(
     String title,
     String description,
     int priority,
-    boolean completed
+    boolean completed,
+    Long ownerId
 ) {}
