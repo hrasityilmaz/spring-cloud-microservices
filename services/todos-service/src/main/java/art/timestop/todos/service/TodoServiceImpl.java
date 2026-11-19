@@ -1,9 +1,15 @@
 package art.timestop.todos.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import art.timestop.todos.dto.request.TodoRequestDto;
-import art.timestop.todos.dto.response.TodoResonseDto;
+import art.timestop.todos.dto.response.TodoResponseDto;
 import art.timestop.todos.entity.Todo;
 import art.timestop.todos.repository.TodoRepository;
 
@@ -20,26 +26,66 @@ public class TodoServiceImpl implements TodoService {
     }
 
 	@Override
-	public TodoResonseDto createTodo(TodoRequestDto request, String userId) {
+	public TodoResponseDto createTodo(TodoRequestDto request, String userId) {
 
         Todo todo = new Todo();
         todo.setTitle(request.title());
         todo.setDescription(request.description());
         todo.setPriority(request.priority());
         todo.setCompleted(false);
-        todo.setId(request.ownerId());
+        todo.setOwner(request.ownerId());
 
         Todo savedTodo = todoRepository.save(todo);
 
-        TodoResonseDto todoResponse = new TodoResonseDto(
-            savedTodo.getId(),
-            savedTodo.getTitle(),
-            savedTodo.getDescription(),
-            savedTodo.getPriority(),
-            savedTodo.isCompleted(),
-            savedTodo.getId());
+        return convertTodotoResponse(savedTodo);
+	}
 
-        return todoResponse;
+	private TodoResponseDto convertTodotoResponse(Todo todo) {
+	    return new TodoResponseDto(
+					 todo.getId(),
+    				 todo.getTitle(),
+    				 todo.getDescription(),
+    				 todo.getPriority(),
+    				 todo.isCompleted(),
+    				 todo.getOwner());
+	}
+
+	@Transactional (readOnly = true)
+	@Override
+	public List<TodoResponseDto> getAllTodos(String ownerId) {
+         return todoRepository.findByOwner(ownerId)
+        	.stream()
+        	.map(this::convertTodotoResponse)
+        	.toList();
+        	}
+
+    @Transactional
+	@Override
+	public TodoResponseDto toggleTodoCompletation(Long id, String ownerId) {
+		Optional<Todo> todo = todoRepository.findByIdAndOwner(id, ownerId);
+		if(todo.isEmpty()){
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Todo not found");
+		}
+
+		todo.get().setCompleted(!todo.get().isCompleted());
+		Todo updatedTodo = todoRepository.save(todo.get());
+
+		return convertTodotoResponse(updatedTodo);
+	}
+
+	@Override
+	@Transactional
+	public void deleteTodo(Long id, String ownerId) {
+
+    Todo todo = todoRepository.findByIdAndOwner(id, ownerId)
+        .orElseThrow(() ->
+            new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Todo not found"
+            )
+        );
+
+    todoRepository.delete(todo);
 	}
 
 

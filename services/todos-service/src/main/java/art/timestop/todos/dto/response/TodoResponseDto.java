@@ -1,6 +1,6 @@
 package art.timestop.todos.dto.response;
 
-public record TodoResonseDto(
+public record TodoResponseDto(
     long id,
     String title,
     String description,
