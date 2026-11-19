@@ -41,6 +41,7 @@ public class TodoController {
     @ResponseStatus ( HttpStatus.CREATED )
     @PostMapping ("/create/todo")
     public TodoResponseDto createTodo(@Valid @RequestBody TodoRequestDto todoRequest, @AuthenticationPrincipal String userId){
+        System.out.println("Authenticated User ID: " + userId);
         return todoService.createTodo(todoRequest, userId);
     }
 

@@ -90,7 +90,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
-        String jwtToken = jwtService.generateToken(new HashMap<>(), user);
+        String jwtToken = jwtService.generateToken(claims, user); // idiot!!! 1hour lost
 
         return new LoginResponseDto(jwtToken);
     }

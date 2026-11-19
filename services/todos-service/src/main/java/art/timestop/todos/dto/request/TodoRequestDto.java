@@ -14,6 +14,5 @@ public record TodoRequestDto(
     String description,
     @Min (value = 1)
     @Max (value = 5)
-    int priority,
-    Long ownerId
+    int priority
 ) {}

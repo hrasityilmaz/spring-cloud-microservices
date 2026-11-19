@@ -28,12 +28,19 @@ public class TodoServiceImpl implements TodoService {
 	@Override
 	public TodoResponseDto createTodo(TodoRequestDto request, String userId) {
 
+    	if (userId == null) {
+            throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED,
+                "User not authenticated"
+            );
+        }
+
         Todo todo = new Todo();
         todo.setTitle(request.title());
         todo.setDescription(request.description());
         todo.setPriority(request.priority());
         todo.setCompleted(false);
-        todo.setOwner(request.ownerId());
+        todo.setOwner(Long.parseLong(userId));
 
         Todo savedTodo = todoRepository.save(todo);
 
