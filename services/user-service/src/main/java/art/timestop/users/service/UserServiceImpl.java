@@ -2,6 +2,7 @@ package art.timestop.users.service;
 
 
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,8 +11,10 @@ import org.springframework.web.server.ResponseStatusException;
 import art.timestop.users.dto.request.PasswordUpdate;
 import art.timestop.users.dto.response.AuthorityResponse;
 import art.timestop.users.dto.response.UserInfoResponse;
+import art.timestop.users.entities.OutboxEvent;
 import art.timestop.users.entities.User;
 import art.timestop.users.enums.Role;
+import art.timestop.users.repository.OutboxRepository;
 import art.timestop.users.repository.UserRepository;
 import art.timestop.users.utils.FindAuthenticatedUser;
 
@@ -21,11 +24,13 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 	private final FindAuthenticatedUser findAuthenticatedUser;
+	private final OutboxRepository outboxRepository;
 
-	public UserServiceImpl(UserRepository userRepository, FindAuthenticatedUser findAuthenticatedUser, PasswordEncoder passwordEncoder) {
+	public UserServiceImpl(UserRepository userRepository, FindAuthenticatedUser findAuthenticatedUser, PasswordEncoder passwordEncoder, OutboxRepository outboxRepository) {
 		this.userRepository = userRepository;
 		this.findAuthenticatedUser = findAuthenticatedUser;
         this.passwordEncoder = passwordEncoder;
+		this.outboxRepository = outboxRepository;
 	}
 
 	@Override
@@ -43,13 +48,27 @@ public class UserServiceImpl implements UserService {
         );
 	}
 
+	@Transactional
 	@Override
 	public void deleteUser() {
 		User user = findAuthenticatedUser.getAuthenticatedUser();
 		if(isLastAdmin(user)){
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "First assign new admin!!");
 		}
+
 		userRepository.delete(user);
+		//kafkaTemplate.send(
+       //    "user.deleted",
+       //    String.valueOf(user.getId())
+       //);
+
+        OutboxEvent event = new OutboxEvent(
+                "USER_DELETED",
+                String.valueOf(user.getId()),
+                String.valueOf(user.getId())
+            );
+
+        outboxRepository.save(event);
 	}
 
 	private boolean isLastAdmin(User user) {

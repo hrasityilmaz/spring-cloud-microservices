@@ -95,6 +95,12 @@ public class TodoServiceImpl implements TodoService {
     todoRepository.delete(todo);
 	}
 
+	@Override
+	@Transactional
+	public void deleteTodosByOwner(String ownerId) {
+    todoRepository.deleteByOwner(ownerId);
+	}
+
 
 
 

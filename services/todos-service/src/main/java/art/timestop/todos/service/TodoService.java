@@ -10,4 +10,5 @@ public interface TodoService  {
     List<TodoResponseDto> getAllTodos(String ownerId);
     TodoResponseDto toggleTodoCompletation(Long id, String ownerId);
     void deleteTodo(Long id, String ownerId);
+    void deleteTodosByOwner(String ownerId);
 }
