@@ -22,6 +22,7 @@ All client requests are routed through the API Gateway. Internal service communi
 - Java 21
 - Spring Boot 4.2.0
 - Spring Cloud Gateway
+- Config Server
 - Spring Cloud Netflix Eureka
 - Spring Security
 - Spring Data JPA / Hibernate
@@ -58,6 +59,12 @@ Instead of maintaining separate configuration files for each service, configurat
 - Git-based configuration repository.
 - Services retrieve their configurations during startup.
 - Environment variables are used for sensitive configuration values .
+
+```env
+$env:DB_USERNAME="...."
+$env:DB_PASSWORD="...."
+$env:JWT_TOKEN="....."
+```
 
 Configuration Repository: [microservices-config](https://github.com/hrasityilmaz/microservices-config)
 
