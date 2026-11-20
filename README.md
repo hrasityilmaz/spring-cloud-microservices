@@ -3,7 +3,7 @@
 
 ![Eureka Dashboard](docs/images/eureka_2.png)
 
-A microservices architecture project built with **Spring Boot 4.1.2** and **Spring Cloud**.
+A microservices architecture project built with **Spring Boot 4.2.0** and **Spring Cloud**.
 
 ## Architecture
 
@@ -19,7 +19,7 @@ All client requests are routed through the API Gateway. Internal service communi
 ## Technologies
 
 - Java 21
-- Spring Boot 4.1.2
+- Spring Boot 4.2.0
 - Spring Cloud Gateway
 - Spring Cloud Netflix Eureka
 - Spring Security
