@@ -11,6 +11,7 @@ A microservices architecture project built with **Spring Boot 4.2.0** and **Spri
 - **Users Service** – Manages user registration, authentication, and JWT generation.
 - **Todos Service** – Manages Todo operations and associates Todos with their authenticated owners.
 - **Eureka Server** – Provides service discovery and dynamic service registration.
+- **Config Server** - Centralize configuration management
 - **MySQL** – Persistent relational storage for Users and Todos services.
 - **Apache Kafka** – Enables asynchronous event-driven communication between microservices.
 
@@ -46,6 +47,19 @@ Protected endpoints require an access token:
 ```http
 Authorization: Bearer <JWT_TOKEN>
 ```
+
+## Configuration Management 
+
+The project uses **Spring Cloud Config Server** to centralize configuration management across microservices.
+
+Instead of maintaining separate configuration files for each service, configurations are stored in a dedicated GitHub repository and served by the Config Server.
+
+- Centralized configuration management through Spring Cloud Config Server.
+- Git-based configuration repository.
+- Services retrieve their configurations during startup.
+- Environment variables are used for sensitive configuration values .
+
+Configuration Repository: [microservices-config](https://github.com/hrasityilmaz/microservices-config)
 
 ## Event-Driven Communication
 
