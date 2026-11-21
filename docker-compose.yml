@@ -1,23 +1,138 @@
-name: kafka
 services:
-  broker:
+  mysqldb:
+    image: mysql:8.4.13
+    container_name: mysqldb
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: tododb
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - microservices-network
+
+  kafka:
     image: apache/kafka:latest
     container_name: kafka
+    hostname: kafka
     ports:
-      - "9092:9092"
+      - "9094:9094"
     environment:
-      KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,EXTERNAL://0.0.0.0:9094,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     volumes:
       - kafka_data:/var/lib/kafka/data
+    networks:
+      - microservices-network
+
+  config-server:
+    image: config-server:1.1
+    container_name: config-server
+    ports:
+      - "8012:8012"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -fsS http://localhost:8012/users-ws/default > /dev/null || exit 1
+      interval: 5s
+      timeout: 3s
+      retries: 15
+      start_period: 30s
+    networks:
+      - microservices-network
+
+  discovery-server:
+    image: discovery-server:1.0
+    container_name: discovery-server
+    ports:
+      - "8010:8010"
+    networks:
+      - microservices-network
+
+  users-service:
+    image: users-service:1.1
+    container_name: users-service
+    hostname: users-service
+    environment:
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      CONFIG_SERVER_URL: http://config-server:8012
+      EUREKA_INSTANCE_HOSTNAME: users-service
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_started
+      mysqldb:
+        condition: service_started
+      kafka:
+        condition: service_started
+    networks:
+      - microservices-network
+
+  todos-service:
+    image: todos-service:1.0
+    container_name: todos-service
+    hostname: todos-service
+    environment:
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      CONFIG_SERVER_URL: http://config-server:8012
+      EUREKA_INSTANCE_HOSTNAME: todos-service
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_started
+      mysqldb:
+        condition: service_started
+      kafka:
+        condition: service_started
+    networks:
+      - microservices-network
+
+  apigateway:
+    image: apigateway:1.0
+    container_name: apigateway
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      CONFIG_SERVER_URL: http://config-server:8012
+    ports:
+      - "8082:8082"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_started
+      users-service:
+        condition: service_started
+      todos-service:
+        condition: service_started
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    external: true
+    name: microservices-network
 
 volumes:
+  mysql_data:
+    external: true
+    name: 5d3469706f68d978ba863189bcfd394af22a269db8a54179efd2359e9c31da1d
+
   kafka_data:
+    external: true
+    name: kafka_kafka_data
