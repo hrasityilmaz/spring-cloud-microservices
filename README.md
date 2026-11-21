@@ -5,6 +5,9 @@
 
 A microservices architecture project built with **Spring Boot 4.2.0** and **Spring Cloud**.
 
+The application has been containerized with Docker and is currently running in Docker containers. The next step is deploying the microservices architecture to **Kubernetes using Minikube**.
+
+
 ## Architecture
 
 - **API Gateway** – Single entry point for client requests. Handles request routing and JWT validation.
