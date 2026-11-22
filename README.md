@@ -1,11 +1,12 @@
 
 # Spring Cloud Microservices
 
-![Eureka Dashboard](docs/images/eureka_2.png)
+![Docker](docs/images/docker.png)
 
 A microservices architecture project built with **Spring Boot 4.2.0** and **Spring Cloud**.
 
-The application has been containerized with Docker and is currently running in Docker containers. The next step is deploying the microservices architecture to **Kubernetes using Minikube**.
+The application has been containerized with Docker and is currently running in Docker containers. 
+Because of memory issues ı couldnt complete kubernetes testing with Minikube.  it is now on \kubernetes` branch.`
 
 
 ## Architecture
@@ -32,6 +33,7 @@ All client requests are routed through the API Gateway. Internal service communi
 - MySQL
 - Apache Kafka
 - JWT
+- Actuator 
 
 ## API Endpoints
 

@@ -1,14 +1,19 @@
+
 services:
   mysqldb:
     image: mysql:8.4.13
     container_name: mysqldb
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: tododb
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      USERS_DB_USERNAME: ${USERS_DB_USERNAME}
+      USERS_DB_PASSWORD: ${USERS_DB_PASSWORD}
+      TODOS_DB_USERNAME: ${TODOS_DB_USERNAME}
+      TODOS_DB_PASSWORD: ${TODOS_DB_PASSWORD}
     ports:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
     networks:
       - microservices-network
 
@@ -36,7 +41,7 @@ services:
       - microservices-network
 
   config-server:
-    image: config-server:1.1
+    image: config-server:1.2
     container_name: config-server
     ports:
       - "8012:8012"
@@ -60,12 +65,13 @@ services:
       - microservices-network
 
   users-service:
-    image: users-service:1.1
+    image: users-service:1.3
     container_name: users-service
     hostname: users-service
     environment:
-      DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
+      DB_USERNAME: ${USERS_DB_USERNAME}
+      DB_PASSWORD: ${USERS_DB_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/tododb
       JWT_SECRET: ${JWT_SECRET}
       CONFIG_SERVER_URL: http://config-server:8012
       EUREKA_INSTANCE_HOSTNAME: users-service
@@ -82,12 +88,13 @@ services:
       - microservices-network
 
   todos-service:
-    image: todos-service:1.0
+    image: todos-service:1.2
     container_name: todos-service
     hostname: todos-service
     environment:
-      DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
+      DB_USERNAME: ${TODOS_DB_USERNAME}
+      DB_PASSWORD: ${TODOS_DB_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/tododb
       JWT_SECRET: ${JWT_SECRET}
       CONFIG_SERVER_URL: http://config-server:8012
       EUREKA_INSTANCE_HOSTNAME: todos-service
@@ -104,7 +111,7 @@ services:
       - microservices-network
 
   apigateway:
-    image: apigateway:1.0
+    image: apigateway:1.1
     container_name: apigateway
     environment:
       JWT_SECRET: ${JWT_SECRET}

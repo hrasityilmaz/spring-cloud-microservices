@@ -61,6 +61,8 @@ public class SecurityConig {
         http.authorizeHttpRequests(configurer ->
             configurer.
                 requestMatchers(
+                    "/actuator/health",
+                    "/actuator/health/**",
                     "/api/auth/**",
                     "/api/user/**",
                     "/swagger-ui/**",
