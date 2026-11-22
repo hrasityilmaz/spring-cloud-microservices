@@ -1,0 +1,39 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apigateway
+  namespace: microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apigateway
+  template:
+    metadata:
+      labels:
+        app: apigateway
+    spec:
+      containers:
+        - name: apigateway
+          image: apigateway:1.0
+          imagePullPolicy: Never
+          ports:
+            - name: http
+              containerPort: 8082
+              protocol: TCP
+          env:
+            - name: CONFIG_SERVER_URL
+              value: "http://config-server:8012"
+            - name: JWT_SECRET
+              value: "073982ebf695e86ee4f96ff02f2fc06aa64004b89921fe0d2aacf0d906bfcba5"
+            - name: JAVA_TOOL_OPTIONS
+              value: "-XX:InitialRAMPercentage=25 -XX:MaxRAMPercentage=50"
+
+          resources:
+            requests:
+              memory: "192Mi"
+              cpu: "100m"
+            limits:
+              memory: "384Mi"
+              cpu: "500m"
