@@ -71,6 +71,7 @@ public class SecurityConig {
                     "/webjars/**",
                     "/docs"
                 ).permitAll()
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             );
 

@@ -1,7 +1,7 @@
 
 # Spring Cloud Microservices
 
-![Docker](docs/images/docker.png)
+![Docker](docs/images/spring.png)
 
 A microservices architecture project built with **Spring Boot 4.2.0** and **Spring Cloud**.
 
