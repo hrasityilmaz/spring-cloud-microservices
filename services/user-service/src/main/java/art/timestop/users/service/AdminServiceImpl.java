@@ -1,12 +1,12 @@
 package art.timestop.users.service;
 
-import java.security.cert.PKIXRevocationChecker.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,6 +17,7 @@ import art.timestop.users.entities.User;
 import art.timestop.users.enums.Role;
 import art.timestop.users.repository.UserRepository;
 
+@Service
 public class AdminServiceImpl implements AdminService {
 
     public final UserRepository userRepository;
